@@ -7,6 +7,19 @@
         <link rel="stylesheet" href="style.css" />
     </head>
     <body>
+        <div class="mode-container">
+            <h1>Select the game mode .</h1>
+            <div class="gameMode">
+                <label for="single">
+                    <input type="radio" name="gameMode" id="single"
+                        value="single"> single player
+                </label>
+                <label for="double">
+                    <input type="radio" name="gameMode" id="double"
+                        value="double"> multi player
+                </label>
+            </div>
+        </div>
         <div class="container">
             <div id="msg"></div>
             <div class="game" id="game">
@@ -20,7 +33,11 @@
                 <button class="box" id="box8"></button>
                 <button class="box" id="box9"></button>
             </div>
+            <div class="button-container">
             <button class="reset">Reset Game</button>
+            <button class="mode-change">Change Mode</button>
+        </div>
+
         </div>
         <script src="script.js"></script>
     </body>

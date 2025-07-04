@@ -1,11 +1,45 @@
-let choice = 0;
-//  choice = Number(prompt("Enter your selection 0 for single player and 1 for double player"));
+const modeContainer = document.querySelector(".mode-container")
+const mainContainer = document.querySelector(".container")
+const modes = document.querySelectorAll(`input[name= "gameMode"]`)
 
-if (choice === 0) {
-  let boxes = document.querySelectorAll(".box");
-  let reset = document.querySelector(".reset");
-  let msg = document.getElementById("msg");
-  let game = document.getElementById("game");
+const boxes = document.querySelectorAll(".box");
+const reset = document.querySelector(".reset");
+const changeMode = (document.getElementsByClassName("mode-change"))[0]
+const msg = document.getElementById("msg");
+const game = document.getElementById("game");
+
+modes.forEach((mode) => {
+  mode.addEventListener("change", (e) => {
+
+    if (e.target.value) {
+      let selectedMode = (e.target.value)
+      modeContainer.style.display = "none";
+      mainContainer.style.display = "flex";
+      if (selectedMode == "single") {
+        SingleMode()
+      }
+      else {
+        DoubleMode()
+      }
+    }
+  })
+
+})
+changeMode.addEventListener("click", () => {
+  location.reload()
+})
+const patterns = [
+  [0, 1, 2],
+  [3, 4, 5],
+  [6, 7, 8],
+  [0, 3, 6],
+  [1, 4, 7],
+  [2, 5, 8],
+  [0, 4, 8],
+  [2, 4, 6],
+];
+
+const SingleMode = () => {
 
   let turnX = true;
   let buttonClicks = 0;
@@ -19,14 +53,12 @@ if (choice === 0) {
     let compIdx;
     do {
       compIdx = Math.floor(Math.random() * 9);
-      console.log(compIdx);
     } while (box_filled.includes(compIdx));
     box_filled.push(compIdx);
     boxes[compIdx].style.color = "#34ff65";
     boxes[compIdx].innerText = "O";
     boxes[compIdx].disabled = true;
     buttonClicks++;
-    console.log(box_filled);
     winnerCheck();
   };
 
@@ -34,7 +66,6 @@ if (choice === 0) {
     box.addEventListener("click", (evt) => {
       let boxId = Number(evt.target.value);
       if (box.innerText === "") {
-        // Check if box is empty
         if (turnX) {
           box.innerText = "X";
           box.style.color = "orange";
@@ -48,21 +79,9 @@ if (choice === 0) {
             generateCompTurns(box_filled);
           }, 700);
         }
-        // turnX = !turnX; // Toggle turn
       }
     });
   }
-
-  let patterns = [
-    [0, 1, 2],
-    [3, 4, 5],
-    [6, 7, 8],
-    [0, 3, 6],
-    [1, 4, 7],
-    [2, 5, 8],
-    [0, 4, 8],
-    [2, 4, 6],
-  ];
 
   let winnerCheck = () => {
     for (let patrn of patterns) {
@@ -73,40 +92,42 @@ if (choice === 0) {
         if (pos1 === pos2 && pos2 === pos3) {
           disable();
           changes(pos1);
-          return; // Exit after finding a winner
+        } else if (buttonClicks === 9 && msg.innerText === "") {
+          drawMsg();
         }
       }
-    }
-    if (buttonClicks === 9 && msg.innerText === "") {
-      drawMsg();
     }
   };
 
   const drawMsg = () => {
-    msg.style.visibility = "visible";
-    game.style.visibility = "hidden";
+    msg.style.display = "flex";
+    game.style.display = "none";
     msg.innerText = "Draw, Play Again";
     reset.innerText = "New Game";
   };
 
   const changes = (winner) => {
     setTimeout(() => {
-      msg.style.visibility = "visible";
-      game.style.visibility = "hidden";
-      msg.innerText = `Congratulations!!! Player ${winner} has won the game`;
+      msg.style.display = "flex";
+      game.style.display = "none";
+      if (winner == "X") {
+        msg.innerText = `Congratulations!!! You won  the game`;
+      } else {
+        msg.innerText = `Oops!!! Computer  won the game`;
+      }
       reset.innerText = "New Game";
-    },700);
+    }, 700);
   };
 
-  let disable = () => {
+  const disable = () => {
     for (let box of boxes) {
       box.disabled = true;
     }
   };
 
   let enable = () => {
-    game.style.visibility = "visible";
-    msg.style.visibility = "hidden";
+    game.style.display = "grid";
+    msg.style.display = "none";
     reset.innerText = "Reset Game";
     msg.innerText = "";
     buttonClicks = 0;
@@ -118,18 +139,16 @@ if (choice === 0) {
   };
 
   reset.addEventListener("click", enable);
-} else if (choice === 1) {
-  let boxes = document.querySelectorAll(".box");
-  let reset = document.querySelector(".reset");
-  let msg = document.getElementById("msg");
-  let game = document.getElementById("game");
+}
+
+
+///////////////////////////////////////////////////////////////////////////////
+const DoubleMode = () => {
   let turnX = true;
   let buttonClicks = 0;
-
   for (let box of boxes) {
     box.addEventListener("click", () => {
       if (box.innerText === "") {
-        // Check if box is empty
         if (turnX) {
           box.innerText = "X";
           box.style.color = "#ffd123";
@@ -145,19 +164,7 @@ if (choice === 0) {
       }
     });
   }
-
-  let patterns = [
-    [0, 1, 2],
-    [3, 4, 5],
-    [6, 7, 8],
-    [0, 3, 6],
-    [1, 4, 7],
-    [2, 5, 8],
-    [0, 4, 8],
-    [2, 4, 6],
-  ];
-
-  let winnerCheck = () => {
+  const winnerCheck = () => {
     for (let patrn of patterns) {
       let pos1 = boxes[patrn[0]].innerText;
       let pos2 = boxes[patrn[1]].innerText;
@@ -175,24 +182,21 @@ if (choice === 0) {
   };
 
   const drawMsg = () => {
-    msg.style.visibility = "visible";
-    game.style.visibility = "hidden";
+    msg.style.display = "flex";
+    game.style.display = "none";
     msg.innerText = "Draw , Play Again";
     reset.innerText = "New Game";
   };
 
   const changes = (winner) => {
-    msg.style.visibility = "visible";
-    game.style.visibility = "hidden";
+    msg.style.display = "flex";
+    game.style.display = "none";
     msg.innerText = `Congratulations!!! Player ${winner} has won the game`;
     reset.innerText = "New Game";
+
     return winner === "X" ? (turnX = true) : (turnX = false);
 
-    // if (winner === "X") {
-    //   turnX = true;
-    // } else {
-    //   turnX = false;
-    // }
+
   };
 
   let disable = () => {
@@ -202,8 +206,8 @@ if (choice === 0) {
   };
 
   let enable = () => {
-    game.style.visibility = "visible";
-    msg.style.visibility = "hidden";
+    game.style.display = "grid";
+    msg.style.display = "none";
     reset.innerText = "Reset Game";
     msg.innerText = "";
     buttonClicks = 0; // Reset buttonClicks
